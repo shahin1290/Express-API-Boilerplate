@@ -25,11 +25,32 @@ app.use(express.json())
   fs.readFileSync(`${__dirname}/dev-data/data/articles.json`)
 ) */
 
-/* app.get('/api/v1/articles', (req, res) => {
-  res
-    .status(200)
-    .json({ status: 'success', results: articles.length, data: { articles } })
-}) */
+app.get('/api/v1/articles', async (req, res) => {
+  try {
+    const articles = await Article.find()
+
+    res.status(201).json({
+      status: 'success',
+      results: articles.length,
+      data: { articles },
+    })
+  } catch (err) {
+    res.status(400).json({ status: 'fail', message: err })
+  }
+})
+
+app.get('/api/v1/articles/:id', async (req, res) => {
+  try {
+    const article = await Article.findById(req.params.id)
+
+    res.status(201).json({
+      status: 'success',
+      data: { article },
+    })
+  } catch (err) {
+    res.status(400).json({ status: 'fail', message: err })
+  }
+})
 
 app.post('/api/v1/articles', async (req, res) => {
   try {
