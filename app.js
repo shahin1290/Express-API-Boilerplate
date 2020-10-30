@@ -29,7 +29,7 @@ app.get('/api/v1/articles', async (req, res) => {
   try {
     const articles = await Article.find()
 
-    res.status(201).json({
+    res.status(200).json({
       status: 'success',
       results: articles.length,
       data: { articles },
@@ -43,12 +43,12 @@ app.get('/api/v1/articles/:id', async (req, res) => {
   try {
     const article = await Article.findById(req.params.id)
 
-    res.status(201).json({
+    res.status(200).json({
       status: 'success',
       data: { article },
     })
   } catch (err) {
-    res.status(400).json({ status: 'fail', message: err })
+    res.status(404).json({ status: 'fail', message: err })
   }
 })
 
@@ -62,6 +62,35 @@ app.post('/api/v1/articles', async (req, res) => {
     })
   } catch (err) {
     res.status(400).json({ status: 'fail', message: err })
+  }
+})
+
+app.patch('/api/v1/articles/:id', async (req, res) => {
+  try {
+    const article = await Article.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+      runValidators: true,
+    })
+
+    res.status(200).json({
+      status: 'success',
+      data: { article },
+    })
+  } catch (err) {
+    res.status(404).json({ status: 'fail', message: err })
+  }
+})
+
+app.delete('/api/v1/articles/:id', async (req, res) => {
+  try {
+    await Article.findByIdAndDelete(req.params.id)
+
+    res.status(204).json({
+      status: 'success',
+      data: null,
+    })
+  } catch (err) {
+    res.status(404).json({ status: 'fail', message: err })
   }
 })
 
