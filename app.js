@@ -1,7 +1,7 @@
 const express = require('express')
 const articleRoutes = require('./routes/articles')
 const AppError = require('./utils/appError')
-const globalErrorHandler = require('./controllers/errorController')
+const globalErrorHandler = require('./controllers/errors')
 
 const app = express()
 app.use(express.json())
