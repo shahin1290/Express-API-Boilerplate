@@ -2,8 +2,6 @@ const express = require('express')
 const router = express.Router()
 const articles = require('../controllers/articles')
 
-const Article = require('../models/Article')
-
 router.route('/').get(articles.index).post(articles.create)
 
 router
