@@ -55,7 +55,7 @@ module.exports = (err, req, res, next) => {
     let error = { ...err }
     if (error.kind === 'ObjectId') error = handleCastErrorDB(error)
     if (error.code === 11000) error = handleDuplicateFieldsDB(error)
-    if (error.errors.name.name === 'ValidatorError')
+    if (error._message.toLowerCase().includes('validation failed'))
       error = handleValidationErrorDB(error)
     sendErrorProd(error, res)
   }
