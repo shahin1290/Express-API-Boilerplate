@@ -36,7 +36,7 @@ const sendErrorProd = (err, res) => {
     })
     //Programming or other unknown error; don't leak error details
   } else {
-    console.log('ERROR, err')
+    console.log('ERROR', err)
 
     res.status(500).json({
       status: 'error',
@@ -44,6 +44,12 @@ const sendErrorProd = (err, res) => {
     })
   }
 }
+
+const handleJWTError = () =>
+  new AppError('Invalid token. Please login again', 401);
+
+const handleTokenExpiredError = () =>
+  new AppError('Your token exired!. Please login again', 401);
 
 module.exports = (err, req, res, next) => {
   err.statusCode = err.statusCode || 500
@@ -55,8 +61,10 @@ module.exports = (err, req, res, next) => {
     let error = { ...err }
     if (error.kind === 'ObjectId') error = handleCastErrorDB(error)
     if (error.code === 11000) error = handleDuplicateFieldsDB(error)
-    if (error._message.toLowerCase().includes('validation failed'))
-      error = handleValidationErrorDB(error)
+    if (error._message && error._message.toLowerCase().includes('validation failed')) error = handleValidationErrorDB(error)
+    if (error.name === 'JsonWebTokenError') error = handleJWTError(error)
+    if (error.name === 'TokenExpiredError')
+      error = handleTokenExpiredError(error)
     sendErrorProd(error, res)
   }
 }
